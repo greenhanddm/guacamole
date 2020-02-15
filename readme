@@ -1,7 +1,7 @@
 #1. import guacd.tar guacamole.tar mysql.tar with docker load
      $ docker load -i guacamole.tar
-	 $ docker load -i guacd.tar
-	 $ docker load -i mysql.tar
+     $ docker load -i guacd.tar
+     $ docker load -i mysql.tar
 #2. docker-compose to deploy guacamole container
      $ docker-compose up -d
 #3. cat config.db to config mysql database
