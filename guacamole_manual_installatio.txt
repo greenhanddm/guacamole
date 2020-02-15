@@ -1,0 +1,105 @@
+Guacamole Manual installation
+
+#1. Install JDK
+     $ yum install -y java-1.8.0-openjdk-devel.x86\_64
+     $ java -version
+
+#2. Downlaod and intsal tomcat
+     https://tomcat.apache.org/download-80.cgi#8.0.53
+     $ tar -xzvf /opt/apache-tomcat-8.5.51.tar.gz
+     $ cd /opt/apache-tomcat-8.5.51/bin
+     $ ./startup.sh
+     test access tomcat
+     http://localhost:8080
+
+#3. Guacamole-Server install
+##3.1 install gcc
+     $ yum install gcc
+
+##3.2 install depend package
+     $ yum -y install cairo-devel libjpeg-devel libpng-devel uuid-devel libjpeg-turbo-devel libtool
+     $ yum -y install ffmpeg-devel  freerdp-devel pango-devel libssh2-devel
+     $ yum -y install libtelnet-devel libvncserver-devel pulseaudio-libs-devel
+     $ yum -y install openssl-devel libvorbis-devel libwebp-devel
+     $ yum -y install freerdp-plugins
+
+##3.3 Download guacamole
+     https://guacamole.apache.org/releases/1.1.0/
+     - guacamole-server-1.1.0.tar.gz
+     - guacamole-1.1.0.war
+
+##3.4 Unzip and instal guacamole-server
+     $ tar -xzvf /opt/guacamole-server-1.0.0.tar.gz
+     $ cd /opt/guacamole-server-1.0.0
+     $ ./configure --with-init-dir=/etc/init.d
+     $ sudo ./configure --with-init-dir=/etc/init.d
+     $ make
+     $ make install
+     $ ldconfig
+
+#4. Install guacamole-client
+     $ mv ./guacamole-1.0.0.war /opt/apache-tomcat-8.5.51/webapps
+	 - configure:
+	 $ mir /etc/guacamole/
+     $ cd /etc/guacamole/
+     $ vi guacamole.properties
+	 $ cat guacamole.properties                                
+	   # hostname and port of guacamole proxy                                              
+     guacd-hostname: localhost                                                           
+     guacd-port:     4822                                                                
+     enable-websocket: true                                                              
+     enable-clipboard-integration: true                                                  
+     # auth-provider: net.sourceforge.guacamole.net.auth.noauth.NoAuthenticationProvider 
+     # noauth-config: /etc/guacamole/noauth-config.xml                                   
+     auth-provider: net.sourceforge.guacamole.net.basic.BasicFileAuthenticationProvider  
+     basic-user-mapping: /etc/guacamole/user-mapping.xml                                 
+     		 
+#5. Create the user-mapping.xml file under /etc/guacamole/
+     $ vi /etc/guacamole/user-mapping.xml
+	 - Example:
+	 <user-mapping>
+        <authorize  password="123456" username="admin">
+                 <connection name="rdp-windows-zongmin">
+                        <protocol>rdp</protocol>
+                        <param name="hostname">119.XXXX.121.XXXX</param>
+                        <param name="port">3389</param>
+                        <param name="username">XXXX</param>
+                        <param name="password">XXXXXX</param>
+                </connection>
+                 <connection name="rdp-192.XXXX.41.XXXX">
+                        <protocol>rdp</protocol>
+                        <param name="hostname">192.XXXX.41.XXXX</param>
+                        <param name="port">3389</param>
+                        <param name="username">XXXXX</param>
+                        <param name="password">XXXXX</param>
+                </connection>
+                <connection name="ssh-192.XXXX.41.XXXX">
+                        <protocol>ssh</protocol>
+                        <param name="hostname">192.XXXX.41.XXXX</param>
+                        <param name="port">22</param>
+                        <param name="username">XXXXX</param>
+                        <param name="password">XXXXX</param>
+                        <param name="enable-sftp">true</param>
+                        <param name="sftp-hostname">192.XXXX.41.XXXX</param>
+                        <param name="sftp-root-directory">/data/sftp</param>
+                        <param name="sftp-username">XXXXX</param>
+                        <param name="sftp-password">XXXXX</param>
+                </connection>
+                 <connection name="ssh-192.XXXX.41.XXXX">
+                        <protocol>ssh</protocol>
+                        <param name="hostname">192.XXXX.41.XXXX</param>
+                        <param name="port">22</param>
+                        <param name="username">XXXXX</param>
+                        <param name="password">XXXXX</param>
+                        <param name="enable-sftp">true</param>
+                        <param name="sftp-hostname">192.XXXX.41.XXXX</param>
+                        <param name="sftp-root-directory">/data/sftp</param>
+                        <param name="sftp-username">XXXXX</param>
+                        <param name="sftp-password">XXXXX</param>
+                </connection>
+         </authorize>
+     </user-mapping> 
+
+#6. Start guacd service
+     $ service guacd restart
+	   http://localhost:8080/guacamole-1.0.0  user/pasword: admin/123456
